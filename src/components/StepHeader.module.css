@@ -1,0 +1,103 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(250, 247, 242, 0.92);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.brandMark {
+  font-size: 1.2rem;
+  color: var(--accent);
+  line-height: 1;
+}
+
+.brandName {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  color: var(--ink);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.steps {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  color: var(--ink-light);
+  background: none;
+  border: none;
+  transition: color 0.15s, background 0.15s;
+  white-space: nowrap;
+}
+
+.step:not(.disabled):hover {
+  color: var(--accent);
+  background: var(--accent-pale);
+}
+
+.step.active {
+  color: var(--accent);
+  background: var(--accent-pale);
+  font-weight: 500;
+}
+
+.step.done {
+  color: var(--ink-muted);
+}
+
+.step.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.stepIcon {
+  display: flex;
+  align-items: center;
+}
+
+.stepLabel {
+  display: inline;
+}
+
+.connector {
+  display: inline-block;
+  width: 20px;
+  height: 1px;
+  background: var(--border);
+  margin: 0 2px;
+  flex-shrink: 0;
+}
+
+.connectorDone {
+  background: var(--accent-light);
+}
+
+@media (max-width: 480px) {
+  .brandName { display: none; }
+  .stepLabel { display: none; }
+  .step { padding: 6px 8px; }
+  .connector { width: 10px; }
+}

@@ -1,0 +1,83 @@
+.panel {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+.panelHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+  margin-bottom: 14px;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+}
+
+.downloadBtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--accent);
+  color: white;
+  padding: 13px 20px;
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.downloadBtn:hover:not(:disabled) {
+  background: #a8530f;
+  transform: translateY(-1px);
+}
+
+.downloadBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.shareBtn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 13px 20px;
+  border: 1.5px solid var(--accent);
+  color: var(--accent);
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+  font-weight: 500;
+  background: transparent;
+  transition: background 0.2s, transform 0.15s;
+  white-space: nowrap;
+}
+
+.shareBtn:hover:not(:disabled) {
+  background: var(--accent-pale);
+  transform: translateY(-1px);
+}
+
+.shareBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.spin {
+  animation: spin 0.7s linear infinite;
+}
+
+.note {
+  margin-top: 10px;
+  font-size: 0.75rem;
+  color: var(--ink-light);
+  text-align: center;
+}

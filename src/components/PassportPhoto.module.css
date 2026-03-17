@@ -1,0 +1,47 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.photo {
+  overflow: hidden;
+  background: #fff;
+  flex-shrink: 0;
+}
+
+.img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.placeholder {
+  width: 100%;
+  background: #e8e4de;
+}
+
+.details {
+  padding: 2px 0;
+  text-align: center;
+}
+
+.name {
+  display: block;
+  font-size: 0.5rem;
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: 0.04em;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dob {
+  display: block;
+  font-size: 0.45rem;
+  color: var(--ink-muted);
+  line-height: 1.3;
+}

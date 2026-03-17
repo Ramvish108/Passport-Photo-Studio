@@ -1,0 +1,35 @@
+.sheetOuter {
+  display: flex;
+  justify-content: center;
+  overflow-x: auto;
+  padding: 8px 0 16px;
+}
+
+.sheet {
+  position: relative;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.18), 0 1px 4px rgba(0,0,0,0.08);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.grid {
+  box-sizing: border-box;
+}
+
+.cell {
+  display: flex;
+  align-items: flex-start;
+}
+
+.pageLabel {
+  position: absolute;
+  bottom: 6px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 7px;
+  color: #bbb;
+  letter-spacing: 0.04em;
+  font-family: 'DM Sans', sans-serif;
+  pointer-events: none;
+}
