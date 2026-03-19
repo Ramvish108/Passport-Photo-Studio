@@ -1,0 +1,412 @@
+.wrapper {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+  animation: fadeIn 0.4s ease both;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.title {
+  font-size: 1.5rem;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.subtitle {
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+}
+
+.pageLayout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+/* LEFT */
+.uploadCol {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: sticky;
+  top: 80px;
+}
+
+.uploadCard {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.uploadCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--cream);
+}
+
+.uploadCardLabel {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.uploadCardActions {
+  display: flex;
+  gap: 5px;
+}
+
+.editBtn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: var(--accent);
+  color: white;
+  font-size: 0.75rem;
+  font-family: 'DM Sans', sans-serif;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.editBtn:hover { background: #a8530f; }
+
+.removeBtn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: #fdecea;
+  color: #c0392b;
+  font-size: 0.75rem;
+  font-family: 'DM Sans', sans-serif;
+  border: 1px solid #f5c6c6;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.removeBtn:hover { background: #f5c6c6; }
+
+.dropzone {
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: var(--cream);
+  overflow: hidden;
+  transition: background 0.15s;
+}
+
+.dropzone:hover { background: var(--accent-pale); }
+.dragOver { background: var(--accent-pale) !important; outline: 2px dashed var(--accent); outline-offset: -3px; }
+
+.dropContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.dropText {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.dropHint {
+  font-size: 0.72rem;
+  color: var(--ink-light);
+}
+
+.uploadedImg {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  display: block;
+}
+
+/* Gap control */
+.gapControl {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.gapHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.gapLabel {
+  font-size: 0.78rem;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.gapValue {
+  font-size: 0.9rem;
+  color: var(--accent);
+}
+
+.slider {
+  width: 100%;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.gapMarkers {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.68rem;
+  color: var(--ink-light);
+}
+
+/* Reset button */
+.resetBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 0.82rem;
+  color: var(--ink-muted);
+  background: var(--white);
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.15s;
+}
+
+.resetBtn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-pale);
+}
+
+/* Help box */
+.helpBox {
+  background: var(--cream-dark);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+}
+
+.helpTitle {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--ink-muted);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.helpList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.helpList li {
+  font-size: 0.78rem;
+  color: var(--ink-muted);
+  line-height: 1.4;
+}
+
+/* Download */
+.downloadBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--ink);
+  color: white;
+  padding: 13px;
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+  font-weight: 500;
+  width: 100%;
+  border: none;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.downloadBtn:hover:not(:disabled) {
+  background: #2a2018;
+  transform: translateY(-1px);
+}
+
+.downloadBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.uploadNote {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--ink-light);
+}
+
+/* RIGHT — A4 preview */
+.previewCol {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.previewTopBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.previewLabel {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--ink-light);
+}
+
+.a4Sheet {
+  position: relative;
+  background: white;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.18);
+  border-radius: 2px;
+  overflow: hidden;
+  user-select: none;
+  cursor: default;
+}
+
+/* Draggable card */
+.draggableCard {
+  position: absolute;
+  border: 1.5px solid #ddd;
+  border-radius: 3px;
+  overflow: hidden;
+  cursor: grab;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.draggableCard:hover {
+  border-color: var(--accent);
+  box-shadow: 0 2px 12px rgba(200,101,26,0.25);
+  z-index: 10;
+}
+
+.dragging {
+  cursor: grabbing !important;
+  border-color: var(--accent) !important;
+  box-shadow: 0 4px 20px rgba(200,101,26,0.35) !important;
+  z-index: 20;
+}
+
+.cardImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+}
+
+.cardEmpty {
+  width: 100%;
+  height: 100%;
+  background: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 0.6rem;
+  color: #bbb;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.moveHandle {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  background: rgba(0,0,0,0.45);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  opacity: 0;
+  transition: opacity 0.15s;
+  pointer-events: none;
+}
+
+.draggableCard:hover .moveHandle { opacity: 1; }
+
+.cardTag {
+  position: absolute;
+  bottom: 4px;
+  left: 4px;
+  font-size: 6px;
+  background: rgba(0,0,0,0.45);
+  color: white;
+  padding: 1px 5px;
+  border-radius: 3px;
+  letter-spacing: 0.06em;
+  pointer-events: none;
+}
+
+/* Resize handle */
+.resizeHandle {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 14px;
+  height: 14px;
+  background: var(--accent);
+  cursor: nwse-resize;
+  border-radius: 3px 0 0 0;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.draggableCard:hover .resizeHandle { opacity: 1; }
+
+.pageFooter {
+  position: absolute;
+  bottom: 5px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 7px;
+  color: #ccc;
+  letter-spacing: 0.04em;
+  pointer-events: none;
+}
+
+@media (max-width: 760px) {
+  .pageLayout { grid-template-columns: 1fr; }
+  .uploadCol { position: static; }
+}

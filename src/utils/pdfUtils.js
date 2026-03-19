@@ -37,8 +37,8 @@ export async function generatePDF(imageDataUrl, count, opts = {}) {
   // Calculate spacing to center the grid
   const totalW = cols * photoW + (cols - 1) * gap;
   const totalH = rows * (photoH + detailH) + (rows - 1) * gap;
-  const startX = (pageW - totalW) / 2;
-  const startY = margin + (pageH - 2 * margin - totalH) / 2;
+  const startX = margin;
+  const startY = margin;
 
   const borderWidths = { none: 0, thin: 0.2, medium: 0.4, thick: 0.6, white: 0.4 };
   const bw = borderWidths[borderStyle] || 0;
