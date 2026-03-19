@@ -316,7 +316,7 @@
   z-index: 10;
 }
 
-.dragging {
+.draggingCard {
   cursor: grabbing !important;
   border-color: var(--accent) !important;
   box-shadow: 0 4px 20px rgba(200,101,26,0.35) !important;
@@ -409,4 +409,58 @@
 @media (max-width: 760px) {
   .pageLayout { grid-template-columns: 1fr; }
   .uploadCol { position: static; }
+}
+/* Mobile selected state */
+.mobileSelected {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 3px rgba(200,101,26,0.35) !important;
+  z-index: 20;
+}
+
+.mobileDragHint {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(200,101,26,0.85);
+  color: white;
+  font-size: 0.65rem;
+  padding: 4px 10px;
+  border-radius: 12px;
+  pointer-events: none;
+  white-space: nowrap;
+  letter-spacing: 0.04em;
+}
+
+/* Mobile banner */
+.mobileSelBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--accent-pale);
+  border: 1px solid var(--accent-light);
+  border-radius: var(--radius);
+  padding: 9px 12px;
+  font-size: 0.82rem;
+  color: var(--accent);
+  gap: 8px;
+}
+
+.mobileSelClose {
+  background: none;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 2px;
+  flex-shrink: 0;
+}
+
+/* rename dragging to draggingCard to avoid conflict */
+.draggingCard {
+  cursor: grabbing !important;
+  border-color: var(--accent) !important;
+  box-shadow: 0 4px 20px rgba(200,101,26,0.35) !important;
+  z-index: 20;
 }

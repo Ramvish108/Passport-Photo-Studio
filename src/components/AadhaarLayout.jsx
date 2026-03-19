@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { Upload, X, Edit2, Download, Move, RotateCcw } from 'lucide-react';
 import AadhaarEditor from './AadhaarEditor';
 import styles from './AadhaarLayout.module.css';
@@ -14,7 +14,6 @@ const CARD_H    = Math.round(CARD_H_MM * MM_TO_PX);
 const MARGIN    = Math.round(10 * MM_TO_PX);
 const PREVIEW_H = Math.round(297 * MM_TO_PX);
 
-// Default positions (centered horizontally, stacked from top)
 const defaultPos = (gap) => ({
   front: { x: Math.round((PREVIEW_W - CARD_W) / 2), y: MARGIN },
   back:  { x: Math.round((PREVIEW_W - CARD_W) / 2), y: MARGIN + CARD_H + Math.round(gap * MM_TO_PX) },
@@ -31,8 +30,16 @@ export default function AadhaarLayout() {
     front: { w: CARD_W, h: CARD_H },
     back:  { w: CARD_W, h: CARD_H },
   });
-  const [dragging, setDragging]       = useState(null); // { side, startX, startY, origX, origY }
-  const [resizing, setResizing]       = useState(null); // { side, startX, startY, origW, origH }
+
+  // Mouse drag state
+  const [dragging, setDragging] = useState(null);
+  const [resizing, setResizing] = useState(null);
+
+  // Mobile: which card is "selected" for touch-move
+  const [mobileSelected, setMobileSelected] = useState(null); // 'front' | 'back' | null
+  const lastTapRef    = useRef({});
+  const touchStartRef = useRef(null);
+
   const sheetRef = useRef(null);
 
   // ── File handling ──────────────────────────────────────────────────────
@@ -54,16 +61,15 @@ export default function AadhaarLayout() {
     setEditingSide(null);
   };
 
-  // ── Reset positions ────────────────────────────────────────────────────
   const resetPositions = () => {
     setPositions(defaultPos(gap));
     setSizes({
       front: { w: CARD_W, h: CARD_H },
       back:  { w: CARD_W, h: CARD_H },
     });
+    setMobileSelected(null);
   };
 
-  // Update back position when gap slider changes (only if not manually moved)
   const handleGapChange = (val) => {
     setGap(val);
     setPositions(prev => ({
@@ -75,7 +81,7 @@ export default function AadhaarLayout() {
     }));
   };
 
-  // ── Drag to move ───────────────────────────────────────────────────────
+  // ── Mouse: drag to move ────────────────────────────────────────────────
   const onMouseDownMove = (e, side) => {
     e.preventDefault();
     const rect = sheetRef.current.getBoundingClientRect();
@@ -85,6 +91,19 @@ export default function AadhaarLayout() {
       startY: e.clientY - rect.top,
       origX: positions[side].x,
       origY: positions[side].y,
+    });
+  };
+
+  const onMouseDownResize = (e, side) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const rect = sheetRef.current.getBoundingClientRect();
+    setResizing({
+      side,
+      startX: e.clientX - rect.left,
+      startY: e.clientY - rect.top,
+      origW: sizes[side].w,
+      origH: sizes[side].h,
     });
   };
 
@@ -99,20 +118,18 @@ export default function AadhaarLayout() {
       const dy = my - dragging.startY;
       const newX = Math.max(0, Math.min(PREVIEW_W - sizes[dragging.side].w, dragging.origX + dx));
       const newY = Math.max(0, Math.min(PREVIEW_H - sizes[dragging.side].h, dragging.origY + dy));
-      setPositions(prev => ({
-        ...prev,
-        [dragging.side]: { x: newX, y: newY },
-      }));
+      setPositions(prev => ({ ...prev, [dragging.side]: { x: newX, y: newY } }));
     }
 
     if (resizing) {
       const dx = mx - resizing.startX;
       const dy = my - resizing.startY;
-      const newW = Math.max(60, resizing.origW + dx);
-      const newH = Math.max(40, resizing.origH + dy);
       setSizes(prev => ({
         ...prev,
-        [resizing.side]: { w: newW, h: newH },
+        [resizing.side]: {
+          w: Math.max(60, resizing.origW + dx),
+          h: Math.max(40, resizing.origH + dy),
+        },
       }));
     }
   }, [dragging, resizing, sizes]);
@@ -122,19 +139,70 @@ export default function AadhaarLayout() {
     setResizing(null);
   }, []);
 
-  // ── Resize handle ──────────────────────────────────────────────────────
-  const onMouseDownResize = (e, side) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const rect = sheetRef.current.getBoundingClientRect();
-    setResizing({
-      side,
-      startX: e.clientX - rect.left,
-      startY: e.clientY - rect.top,
-      origW: sizes[side].w,
-      origH: sizes[side].h,
-    });
+  // ── Touch: double tap to select, then drag to move ─────────────────────
+  const handleDoubleTap = (side) => {
+    if (mobileSelected === side) {
+      // Second double tap — deselect (release)
+      setMobileSelected(null);
+    } else {
+      // First double tap — select this card
+      setMobileSelected(side);
+    }
   };
+
+  const onTouchStart = (e, side) => {
+    const now = Date.now();
+    const last = lastTapRef.current[side] || 0;
+
+    if (now - last < 350) {
+      // Double tap detected
+      e.preventDefault();
+      handleDoubleTap(side);
+      lastTapRef.current[side] = 0;
+      return;
+    }
+    lastTapRef.current[side] = now;
+
+    // If this card is selected, start tracking touch for movement
+    if (mobileSelected === side) {
+      const touch = e.touches[0];
+      const rect  = sheetRef.current.getBoundingClientRect();
+      touchStartRef.current = {
+        side,
+        startX: touch.clientX - rect.left,
+        startY: touch.clientY - rect.top,
+        origX: positions[side].x,
+        origY: positions[side].y,
+      };
+    }
+  };
+
+  const onTouchMove = useCallback((e) => {
+    if (!touchStartRef.current || !mobileSelected) return;
+    e.preventDefault();
+    const touch = e.touches[0];
+    const rect  = sheetRef.current.getBoundingClientRect();
+    const mx = touch.clientX - rect.left;
+    const my = touch.clientY - rect.top;
+    const dx = mx - touchStartRef.current.startX;
+    const dy = my - touchStartRef.current.startY;
+    const side = touchStartRef.current.side;
+    const newX = Math.max(0, Math.min(PREVIEW_W - sizes[side].w, touchStartRef.current.origX + dx));
+    const newY = Math.max(0, Math.min(PREVIEW_H - sizes[side].h, touchStartRef.current.origY + dy));
+    setPositions(prev => ({ ...prev, [side]: { x: newX, y: newY } }));
+  }, [mobileSelected, sizes]);
+
+  const onTouchEnd = useCallback(() => {
+    touchStartRef.current = null;
+  }, []);
+
+  // Attach touch listeners with passive:false so we can preventDefault
+  useEffect(() => {
+    const sheet = sheetRef.current;
+    if (!sheet) return;
+    sheet.addEventListener('touchmove', onTouchMove, { passive: false });
+    return () => sheet.removeEventListener('touchmove', onTouchMove);
+  }, [onTouchMove]);
 
   // ── PDF Download ───────────────────────────────────────────────────────
   const handleDownload = async () => {
@@ -142,7 +210,6 @@ export default function AadhaarLayout() {
     setGenerating(true);
     try {
       const { generateAadhaarPDF } = await import('../utils/aadhaarPdfUtils');
-      // Convert preview px positions/sizes back to mm for PDF
       const pxToMm = 210 / PREVIEW_W;
       await generateAadhaarPDF(frontImage, backImage, {
         gapMM: gap,
@@ -213,7 +280,7 @@ export default function AadhaarLayout() {
             onEdit={() => setEditingSide('back')}
           />
 
-          {/* Gap */}
+          {/* Gap slider */}
           <div className={styles.gapControl}>
             <div className={styles.gapHeader}>
               <span className={styles.gapLabel}>Gap between cards</span>
@@ -227,17 +294,18 @@ export default function AadhaarLayout() {
             <div className={styles.gapMarkers}><span>3mm</span><span>30mm</span></div>
           </div>
 
-          {/* Reset positions */}
+          {/* Reset */}
           <button className={styles.resetBtn} onClick={resetPositions}>
             <RotateCcw size={14} /> Reset Layout to Default
           </button>
 
+          {/* Help */}
           <div className={styles.helpBox}>
-            <p className={styles.helpTitle}>How to adjust:</p>
+            <p className={styles.helpTitle}>How to adjust</p>
             <ul className={styles.helpList}>
-              <li>🖱 <strong>Drag</strong> cards on the preview to reposition</li>
-              <li>↔ <strong>Drag corner handle</strong> to resize</li>
-              <li>🔄 Use <strong>Reset Layout</strong> to go back to default</li>
+              <li>🖥 <strong>Desktop:</strong> drag card to move · drag orange corner to resize</li>
+              <li>📱 <strong>Mobile:</strong> double-tap card to select (glows orange) · drag to move · double-tap again to release</li>
+              <li>🔄 <strong>Reset Layout</strong> restores default positions</li>
             </ul>
           </div>
 
@@ -258,11 +326,25 @@ export default function AadhaarLayout() {
           )}
         </div>
 
-        {/* RIGHT: A4 preview with drag */}
+        {/* RIGHT: A4 preview */}
         <div className={styles.previewCol}>
-          <div className={styles.previewTopBar}>
-            <p className={styles.previewLabel}>A4 Sheet Preview — drag cards to reposition</p>
-          </div>
+
+          {/* Mobile selected indicator */}
+          {mobileSelected && (
+            <div className={styles.mobileSelBanner}>
+              <span>
+                ✋ <strong>{mobileSelected === 'front' ? 'Front' : 'Back'}</strong> selected — drag to move · double-tap to release
+              </span>
+              <button
+                className={styles.mobileSelClose}
+                onClick={() => setMobileSelected(null)}
+              >
+                <X size={14} />
+              </button>
+            </div>
+          )}
+
+          <p className={styles.previewLabel}>A4 Sheet Preview</p>
 
           <div
             ref={sheetRef}
@@ -271,32 +353,36 @@ export default function AadhaarLayout() {
             onMouseMove={onMouseMove}
             onMouseUp={onMouseUp}
             onMouseLeave={onMouseUp}
+            onTouchEnd={onTouchEnd}
           >
-
-            {/* Front card */}
             <DraggableCard
+              side="front"
               label="FRONT"
               image={frontImage}
               x={positions.front.x}
               y={positions.front.y}
               w={sizes.front.w}
               h={sizes.front.h}
+              isDragging={dragging?.side === 'front'}
+              isMobileSelected={mobileSelected === 'front'}
               onMouseDownMove={(e) => onMouseDownMove(e, 'front')}
               onMouseDownResize={(e) => onMouseDownResize(e, 'front')}
-              isDragging={dragging?.side === 'front'}
+              onTouchStart={(e) => onTouchStart(e, 'front')}
             />
 
-            {/* Back card */}
             <DraggableCard
+              side="back"
               label="BACK"
               image={backImage}
               x={positions.back.x}
               y={positions.back.y}
               w={sizes.back.w}
               h={sizes.back.h}
+              isDragging={dragging?.side === 'back'}
+              isMobileSelected={mobileSelected === 'back'}
               onMouseDownMove={(e) => onMouseDownMove(e, 'back')}
               onMouseDownResize={(e) => onMouseDownResize(e, 'back')}
-              isDragging={dragging?.side === 'back'}
+              onTouchStart={(e) => onTouchStart(e, 'back')}
             />
 
             <div className={styles.pageFooter}>
@@ -310,14 +396,23 @@ export default function AadhaarLayout() {
   );
 }
 
-// ─── Draggable Card ───────────────────────────────────────────────────────
+// ─── Draggable Card ────────────────────────────────────────────────────────
 
-function DraggableCard({ label, image, x, y, w, h, onMouseDownMove, onMouseDownResize, isDragging }) {
+function DraggableCard({
+  label, image, x, y, w, h,
+  isDragging, isMobileSelected,
+  onMouseDownMove, onMouseDownResize, onTouchStart,
+}) {
   return (
     <div
-      className={`${styles.draggableCard} ${isDragging ? styles.dragging : ''}`}
+      className={`
+        ${styles.draggableCard}
+        ${isDragging      ? styles.draggingCard  : ''}
+        ${isMobileSelected ? styles.mobileSelected : ''}
+      `}
       style={{ left: x, top: y, width: w, height: h }}
       onMouseDown={onMouseDownMove}
+      onTouchStart={onTouchStart}
     >
       {image ? (
         <img src={image} alt={label} className={styles.cardImg} draggable={false} />
@@ -328,15 +423,15 @@ function DraggableCard({ label, image, x, y, w, h, onMouseDownMove, onMouseDownR
         </div>
       )}
 
-      {/* Move cursor indicator */}
-      <div className={styles.moveHandle}>
-        <Move size={12} />
-      </div>
-
-      {/* Card label */}
+      <div className={styles.moveHandle}><Move size={12} /></div>
       <span className={styles.cardTag}>{label}</span>
 
-      {/* Resize handle — bottom right corner */}
+      {/* Mobile double-tap hint */}
+      {isMobileSelected && (
+        <div className={styles.mobileDragHint}>Drag to move</div>
+      )}
+
+      {/* Resize handle */}
       <div
         className={styles.resizeHandle}
         onMouseDown={onMouseDownResize}
@@ -345,7 +440,7 @@ function DraggableCard({ label, image, x, y, w, h, onMouseDownMove, onMouseDownR
   );
 }
 
-// ─── Upload Card ──────────────────────────────────────────────────────────
+// ─── Upload Card ───────────────────────────────────────────────────────────
 
 function UploadCard({ label, image, onFile, onDrop, onClear, onEdit }) {
   const inputRef = React.useRef(null);
